@@ -11,35 +11,34 @@ var db = require("./models");
 
 var app = express();
 
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 
 app.use(express.static("public"));
+
+// Handlebars
+app.engine(
+    "handlebars",
+    exphbs({
+      defaultLayout: "main"
+    })
+  );
+  app.set("view engine", "handlebars");
 
 // If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
 var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
 
-mongoose.connect(MONGODB_URI);
+//mongoose.connect(MONGODB_URI);
 
 //potentially use handlebars here
-app.get("/scrape", function(req,res){
-    //pull from site I'm going to use
-    axios.get("http://www.echojs.com/").then(function(response){
-        var $ = cheerio.load(response.data);
-
-    //grab a tag where I want to grab the info I'll use
-    })
-})
-
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-// Make public a static folder
-app.use(express.static("public"));
 
 // Connect to the Mongo DB
 mongoose.connect("mongodb://localhost/unit18Populater", { useNewUrlParser: true });
 
 // Routes
+require("./routes/html-routes")(app);
+
+
 
 // A GET route for scraping the echoJS website
 app.get("/scrape", function(req, res) {
